@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
     data.forEach(link => {
       const tr = document.createElement('tr');
       const date = new Date(link.date).toLocaleString();
+      const ip = link.ip || 'Unknown';
+      const cellId = `geo-${link.id}`;
       
       tr.innerHTML = `
         <td>
@@ -66,13 +68,43 @@ document.addEventListener('DOMContentLoaded', () => {
         <td>${link.clicks || 0}</td>
         <td>
           <div class="meta-data">
-            <strong>IP:</strong> ${link.ip || 'Unknown'}<br>
+            <strong>IP:</strong> ${ip}<br>
+            <strong>Location:</strong> <span id="${cellId}">Loading...</span><br>
             <strong>UA:</strong> ${link.userAgent || 'Unknown'}
           </div>
         </td>
         <td><span class="meta-data">${date}</span></td>
       `;
       tableBody.appendChild(tr);
+      resolveGeolocation(ip, cellId);
     });
+  }
+
+  function resolveGeolocation(ip, cellId) {
+    const el = document.getElementById(cellId);
+    if (!el) return;
+    
+    if (ip === '::1' || ip === '127.0.0.1' || ip.includes('127.0.0.1') || ip === 'localhost') {
+      el.textContent = 'Localhost (Your Device)';
+      return;
+    }
+    
+    let cleanIp = ip;
+    if (ip.startsWith('::ffff:')) {
+      cleanIp = ip.substring(7);
+    }
+    
+    fetch(`https://ipapi.co/${cleanIp}/json/`)
+      .then(res => res.json())
+      .then(geo => {
+        if (geo.error) {
+          el.textContent = 'Unknown (Lookup failed)';
+        } else {
+          el.textContent = `${geo.city || ''}, ${geo.region || ''}, ${geo.country_name || ''} (${geo.org || 'Unknown ISP'})`;
+        }
+      })
+      .catch(() => {
+        el.textContent = 'Unknown (Network error)';
+      });
   }
 });
