@@ -1,6 +1,6 @@
-# ShortSpire
+# shorten-da-thing
 
-ShortSpire is a premium, client-powered URL shortener built with HTML, CSS, and vanilla JavaScript. It runs entirely in the browser and requires no server-side database. It features two modes of operation:
+shorten-da-thing is a premium, client-powered URL shortener built with HTML, CSS, and vanilla JavaScript. It runs entirely in the browser and requires no server-side database. It features two modes of operation:
 1. **Portable Mode (Zero-Database)**: Encodes and compresses URLs directly into the URL hash, making the shortened link completely portable and self-contained. Anyone who clicks the link will be automatically redirected by the client code without needing a database lookup.
 2. **Local Database Mode**: Allows creating custom, readable aliases for your links. The mapping is stored locally in your browser's `localStorage` and keeps track of click analytics.
 
@@ -15,7 +15,7 @@ ShortSpire is a premium, client-powered URL shortener built with HTML, CSS, and 
 
 ## How to Run Locally
 
-Since ShortSpire is built entirely as a static client-side web application, you do not need to install any heavy dependencies (like Node.js, Python, etc.) to run it.
+Since shorten-da-thing is built entirely as a static client-side web application, you do not need to install any heavy dependencies (like Node.js, Python, etc.) to run it.
 
 ### Option 1: Open directly in the Browser
 Simply double-click the `index.html` file on your computer to open it in Chrome, Firefox, Safari, or Edge.
@@ -29,14 +29,14 @@ Or, if you use VS Code, you can use the **Live Server** extension.
 
 ## Deployment to GitHub Pages
 
-ShortSpire is designed to be hosted for free on GitHub Pages! 
+shorten-da-thing is designed to be hosted for free on GitHub Pages! 
 
 1. Create a repository on your GitHub account (e.g., `url-shortener`).
 2. Push this code to the repository:
    ```bash
    git init
    git add .
-   git commit -m "Initial commit of ShortSpire URL Shortener"
+   git commit -m "Initial commit of shorten-da-thing URL Shortener"
    git branch -M main
    git remote add origin https://github.com/<your-username>/<your-repo-name>.git
    git push -u origin main

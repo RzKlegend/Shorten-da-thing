@@ -77,8 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
           startRedirection(data.originalUrl);
         })
         .catch(err => {
-          showToast('Short link not found or expired', 'error');
-          cleanHash();
+          // Fallback to localStorage for GitHub Pages / Static hosting
+          const db = JSON.parse(localStorage.getItem('shortendathing_links')) || [];
+          const record = db.find(link => link.shortCode === code);
+          if (record) {
+            record.clicks = (record.clicks || 0) + 1;
+            localStorage.setItem('shortendathing_links', JSON.stringify(db));
+            startRedirection(record.originalUrl);
+          } else {
+            showToast('Short link not found or expired', 'error');
+            cleanHash();
+          }
         });
     }
   }
@@ -251,8 +260,22 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         displayResults(url, data.shortUrl);
       } catch(err) {
-        showToast('Network error while shortening link', 'error');
-        return;
+        // Fallback to localStorage for GitHub Pages / Static hosting
+        const db = JSON.parse(localStorage.getItem('shortendathing_links')) || [];
+        const shortCode = alias || generateShortCode();
+        const shortUrl = `${currentOrigin}#s/${shortCode}`;
+        
+        db.unshift({
+          id: Date.now().toString(),
+          originalUrl: url,
+          shortUrl,
+          shortCode,
+          type: 'local',
+          clicks: 0,
+          date: new Date().toISOString()
+        });
+        localStorage.setItem('shortendathing_links', JSON.stringify(db));
+        displayResults(url, shortUrl);
       }
     }
   }
@@ -332,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       const link = document.createElement('a');
       link.href = blobUrl;
-      link.download = 'shortspire-qr.png';
+      link.download = 'shorten-da-thing-qr.png';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
