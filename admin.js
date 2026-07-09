@@ -96,16 +96,24 @@ document.addEventListener('DOMContentLoaded', () => {
       cleanIp = ip.substring(7);
     }
     
-    fetch(`https://ipapi.co/${cleanIp}/json/`)
+    // Fallback if network fails: link IP to ipinfo website
+    const makeFallbackIpLink = () => {
+      if (ipEl) {
+         ipEl.innerHTML = `<a href="https://ipinfo.io/${cleanIp}" target="_blank" style="color: var(--secondary); text-decoration: none;" title="View IP details on ipinfo.io">${ip} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.7rem"></i></a>`;
+      }
+    };
+
+    fetch(`https://ipinfo.io/${cleanIp}/json`)
       .then(res => res.json())
       .then(geo => {
-        if (geo.error) {
+        if (geo.error || !geo.loc) {
           geoEl.textContent = 'Unknown (Lookup failed)';
+          makeFallbackIpLink();
         } else {
-          const locationText = `${geo.city || ''}, ${geo.region || ''}, ${geo.country_name || ''} (${geo.org || 'Unknown ISP'})`;
+          const locationText = `${geo.city || ''}, ${geo.region || ''}, ${geo.country || ''} (${geo.org || 'Unknown ISP'})`;
           // If lat/lng are available, make both IP and Location clickable Google Maps links
-          if (geo.latitude && geo.longitude) {
-            const mapsUrl = `https://www.google.com/maps/@${geo.latitude},${geo.longitude},14z`;
+          if (geo.loc) {
+            const mapsUrl = `https://www.google.com/maps/@${geo.loc},14z`;
             geoEl.innerHTML = `<a href="${mapsUrl}" target="_blank" style="color: var(--secondary); text-decoration: none;" title="View on Google Maps">${locationText} <i class="fa-solid fa-map-location-dot" style="font-size:0.7rem"></i></a>`;
             // Also make the IP address a clickable Maps link using the resolved coordinates
             if (ipEl) {
@@ -113,11 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           } else {
             geoEl.textContent = locationText;
+            makeFallbackIpLink();
           }
         }
       })
       .catch(() => {
-        geoEl.textContent = 'Unknown (Network error)';
+        geoEl.textContent = 'Unknown (Network blocked or error)';
+        makeFallbackIpLink();
       });
   }
 });
