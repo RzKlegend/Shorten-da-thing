@@ -1,7 +1,7 @@
 # shorten-da-thing
 
 *short note from me:-
-     started this project becasuse everytime I wanted to shorten a massive url to a short thing (hence the name) that can be read easily. were 1-2 websites online      that achieved this but thought of making it myself. I've also made a few changes in the original idea of the projects as follows:-
+     started this project becasuse everytime I wanted to shorten a massive url to a short thing (hence the name) that can be read easily, there were only 1-2 websites online that achieved this but thought of making it myself. I've also made a few changes in the original idea of the projects as follows:-
      -added a geolocation tracker, that tracks your location based on the url that you paste on the website
      -can identify you ip-address
      -can identify which device you are using, on which web-browser
